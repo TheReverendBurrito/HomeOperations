@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Home Operations Center · Security{% endblock %}
+{% block content %}
+<section class="page-heading">
+  <div><div class="page-eyebrow">Operational Domain</div><h2>Security Operations</h2><p>Ring camera health, motion posture, battery condition, and recent activity through Home Assistant.</p></div>
+  <a class="page-back-link" href="{{ url_for('home') }}">← Home overview</a>
+</section>
+
+<section class="security-kpi-grid">
+  <article class="card security-kpi"><span>Cameras Online</span><strong id="securityOnline">-- / --</strong><small id="securityOnlineDetail">Loading</small></article>
+  <article class="card security-kpi"><span>Motion Enabled</span><strong id="securityMotion">-- / --</strong><small>Detection posture</small></article>
+  <article class="card security-kpi"><span>Active Alerts</span><strong id="securityAlerts">--</strong><small id="securityAlertDetail">Loading</small></article>
+  <article class="card security-kpi security-last-event-kpi"><span>Last Security Event</span><strong id="securityLastEventName">--</strong><small id="securityLastEvent">Most recent camera activity</small></article>
+</section>
+
+<section class="card security-camera-section">
+  <div class="section-header compact-section-header">
+    <div><div class="section-title">Camera Health</div><div id="securityCameraSummary" class="section-subtitle">Five Ring cameras monitored through Home Assistant</div></div>
+    <div id="securityDomainBadge" class="security-domain-badge">Loading</div>
+  </div>
+  <div id="securityCameraGrid" class="security-camera-grid" aria-live="polite"></div>
+  <div id="securityCameraEmpty" class="empty-state is-hidden">Security camera telemetry is unavailable.</div>
+</section>
+
+<section class="card security-operating-note">
+  <div class="section-title">Operating Model</div>
+  <p>RC-001 provides operational awareness and camera health monitoring. Live video, recordings, two-way audio, and advanced camera configuration remain managed through Ring.</p>
+</section>
+{% endblock %}

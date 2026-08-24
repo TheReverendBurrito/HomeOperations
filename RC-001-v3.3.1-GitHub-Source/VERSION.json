@@ -1,0 +1,13 @@
+{
+  "product": "RC-001",
+  "display_name": "Home Operations Center",
+  "version": "3.3.1",
+  "version_short": "3.3.1",
+  "build": "2026.07.21.002",
+  "release_type": "production",
+  "release_type_label": "Production",
+  "codename": "Home Operations Identity",
+  "database_schema": 4,
+  "compatible_from": "2.0.0",
+  "stage": "Release Candidate"
+}

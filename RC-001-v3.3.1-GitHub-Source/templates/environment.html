@@ -1,0 +1,251 @@
+{% extends "base.html" %}
+
+{% block title %}Home Operations Center · Environment{% endblock %}
+
+{% block content %}
+<section class="page-heading">
+    <div>
+        <div class="page-eyebrow">Operational Domain</div>
+        <h2>Environmental Operations</h2>
+        <p>
+            Cabinet conditions, outdoor air quality, and current outside
+            temperature.
+        </p>
+    </div>
+    <a class="page-back-link" href="{{ url_for('home') }}">← Home overview</a>
+</section>
+
+<section class="card environment-card">
+    <div class="section-header compact-section-header">
+        <div>
+            <div class="section-title">Environmental Monitoring</div>
+            <div class="section-subtitle">
+                Cabinet conditions and EPA outdoor air quality
+            </div>
+        </div>
+    </div>
+
+    <div class="environment-domain-label">Indoor</div>
+    <div class="environment-grid">
+        <article class="environment-item environment-item-primary">
+            <div class="environment-icon" aria-hidden="true">
+                <svg class="icon icon-lg" aria-hidden="true">
+                    <use href="{{ url_for('static', filename='icons.svg') }}#thermometer"></use>
+                </svg>
+            </div>
+            <div id="temperature" class="environment-reading">N/A</div>
+            <div class="environment-label">Temperature</div>
+            <div class="environment-detail">Cabinet air temperature</div>
+        </article>
+
+        <article class="environment-item environment-item-primary">
+            <div class="environment-icon" aria-hidden="true">
+                <svg class="icon icon-lg" aria-hidden="true">
+                    <use href="{{ url_for('static', filename='icons.svg') }}#droplets"></use>
+                </svg>
+            </div>
+            <div id="humidity" class="environment-reading">N/A</div>
+            <div class="environment-label">Humidity</div>
+            <div class="environment-detail">Relative humidity</div>
+        </article>
+
+        <article class="environment-item">
+            <div class="environment-icon" aria-hidden="true">
+                <svg class="icon icon-lg" aria-hidden="true">
+                    <use href="{{ url_for('static', filename='icons.svg') }}#fan"></use>
+                </svg>
+            </div>
+            <div class="environment-reading environment-reading-text">
+                2 Fans
+            </div>
+            <div class="environment-label">Cooling</div>
+            <div class="environment-detail">Noctua NF-A12x25</div>
+        </article>
+
+        <article class="environment-item">
+            <div class="environment-icon" aria-hidden="true">
+                <svg class="icon icon-lg" aria-hidden="true">
+                    <use href="{{ url_for('static', filename='icons.svg') }}#clock"></use>
+                </svg>
+            </div>
+            <div
+                id="cabinetRuntime"
+                class="environment-reading environment-reading-text"
+            >
+                --
+            </div>
+            <div class="environment-label">Runtime</div>
+            <div class="environment-detail">Since application startup</div>
+        </article>
+
+        <article class="environment-item">
+            <div class="environment-icon" aria-hidden="true">
+                <svg class="icon icon-lg" aria-hidden="true">
+                    <use href="{{ url_for('static', filename='icons.svg') }}#lightbulb"></use>
+                </svg>
+            </div>
+            <div
+                id="lightingPreset"
+                class="environment-reading environment-reading-text"
+            >
+                --
+            </div>
+            <div class="environment-label">Cabinet Mode</div>
+            <div class="environment-detail">Current lighting state</div>
+        </article>
+    </div>
+
+    <div class="environment-domain-label environment-domain-label-outdoor">
+        Outdoor
+    </div>
+    <div class="environment-grid environment-grid-outdoor">
+        <article
+            id="airQualityCard"
+            class="environment-item air-quality-item"
+            data-aqi-level="unknown"
+        >
+            <div
+                class="environment-icon air-quality-icon"
+                aria-hidden="true"
+            >
+                🌫
+            </div>
+
+            <div class="air-quality-topline">
+                <div class="environment-hero-metric">
+                    <div class="environment-hero-value-line">
+                        <span
+                            id="airQualityValue"
+                            class="environment-reading air-quality-value"
+                        >
+                            --
+                        </span>
+                        <span class="air-quality-unit">AQI</span>
+                    </div>
+                    <div class="environment-hero-label">Air Quality</div>
+                    <div
+                        id="airQualityCategory"
+                        class="air-quality-category"
+                    >
+                        Loading AirNow…
+                    </div>
+                    <div class="air-quality-trend-wrap">
+                        <span class="air-quality-trend-label">Trend</span>
+                        <span id="airQualityTrend" class="air-quality-trend">
+                            Waiting
+                        </span>
+                    </div>
+                </div>
+
+                <div
+                    class="environment-hero-separator"
+                    aria-hidden="true"
+                ></div>
+
+                <div
+                    class="environment-hero-metric
+                           environment-hero-metric-temperature"
+                >
+                    <div class="environment-hero-value-line">
+                        <span
+                            id="outdoorTemperature"
+                            class="outdoor-temperature-value"
+                        >
+                            --
+                        </span>
+                        <span class="outdoor-temperature-unit">°F</span>
+                    </div>
+                    <div class="environment-hero-label">
+                        Outdoor Temperature
+                    </div>
+                    <div id="outdoorFeelsLike" class="outdoor-feels-like">
+                        Feels like --
+                    </div>
+                </div>
+            </div>
+
+            <div class="environment-label">Outdoor Air Quality</div>
+
+            <div class="air-quality-meta">
+                <span id="airQualityPollutant">EPA AirNow</span>
+                <span id="airQualityLocation"></span>
+            </div>
+
+            <div id="airQualityAdvisory" class="air-quality-advisory">
+                Waiting for current AirNow data.
+            </div>
+
+            <svg
+                id="airQualitySparkline"
+                class="aqi-sparkline"
+                viewBox="0 0 100 36"
+                role="img"
+                aria-label="24-hour AQI trend"
+            ></svg>
+
+            <div class="air-quality-updated">
+                Updated <span id="airQualityUpdated">--</span>
+            </div>
+        </article>
+    </div>
+</section>
+
+{% if weather_radar_enabled %}
+<section class="card weather-radar-card" aria-labelledby="weatherRadarTitle">
+    <div class="section-header compact-section-header weather-radar-header">
+        <div>
+            <div id="weatherRadarTitle" class="section-title">
+                Local Weather Radar
+            </div>
+            <div class="section-subtitle">
+                Live precipitation near the configured location
+            </div>
+        </div>
+        <div class="weather-radar-actions">
+            <span class="weather-radar-live">
+                <span class="weather-radar-live-dot" aria-hidden="true"></span>
+                Live radar
+            </span>
+            <a
+                class="weather-radar-open"
+                href="{{ weather_radar_full_url }}"
+                target="_blank"
+                rel="noopener noreferrer"
+            >
+                Open Full Radar ↗
+            </a>
+        </div>
+    </div>
+
+    <div id="weatherRadarShell" class="weather-radar-shell">
+        <div class="weather-radar-loading" aria-live="polite">
+            Loading local radar…
+        </div>
+        <iframe
+            id="weatherRadarFrame"
+            class="weather-radar-frame"
+            src="{{ weather_radar_url }}"
+            title="Live Windy precipitation radar centered on the configured location"
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+            allowfullscreen
+        ></iframe>
+        <div class="weather-radar-fallback" role="status">
+            <strong>Radar temporarily unavailable</strong>
+            <span>The rest of RC-001 remains fully operational.</span>
+            <a
+                href="{{ weather_radar_full_url }}"
+                target="_blank"
+                rel="noopener noreferrer"
+            >
+                Open Windy Radar ↗
+            </a>
+        </div>
+    </div>
+
+    <div class="weather-radar-attribution">
+        Interactive precipitation radar provided by Windy
+    </div>
+</section>
+{% endif %}
+{% endblock %}

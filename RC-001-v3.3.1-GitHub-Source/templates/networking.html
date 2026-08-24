@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+{% block title %}Home Operations Center · Networking{% endblock %}
+{% block content %}
+<section class="page-heading">
+  <div><div class="page-eyebrow">Operational Domain</div><h2>Networking</h2><p>Read-only logical topology and live Peplink client inventory. Exact Deco access-point association is shown only when verifiable.</p></div>
+  <a class="page-back-link" href="{{ url_for('home') }}">← Home overview</a>
+</section>
+
+<section class="networking-health-section">
+  <div class="section-header compact-section-header"><div><div class="section-title">Network Health</div><div id="networkingDiscoveryDetail" class="section-subtitle">Loading discovery status</div></div><span id="networkingUpdated" class="networking-updated">Loading</span></div>
+  <div class="networking-summary-grid">
+    <article class="card networking-summary-card"><span>Total Devices</span><strong id="networkingTotal">--</strong><small>Known logical devices</small></article>
+    <article class="card networking-summary-card"><span>Infrastructure</span><strong id="networkingInfrastructure">--</strong><small>Core services and controllers</small></article>
+    <article class="card networking-summary-card"><span>Security</span><strong id="networkingSecurity">--</strong><small>Ring camera fleet</small></article>
+    <article class="card networking-summary-card"><span>Client Devices</span><strong id="networkingClients">--</strong><small id="networkingActiveClients">-- active</small></article>
+    <article id="networkingUnknownCard" class="card networking-summary-card"><span>Unknown / New</span><strong id="networkingUnknown">--</strong><small id="networkingNewDevices">-- new</small></article>
+    <article id="networkingOfflineCard" class="card networking-summary-card"><span>Offline</span><strong id="networkingOffline">--</strong><small>Known devices unavailable</small></article>
+  </div>
+</section>
+
+<details class="card networking-collapsible">
+  <summary class="networking-collapsible-summary">
+    <span><strong>Logical Network Topology</strong><small>Internet sources, routing core, wireless distribution, and live group totals</small></span>
+    <span class="networking-summary-actions"><span class="networking-readonly-badge">Read only</span><span class="networking-chevron" aria-hidden="true"></span></span>
+  </summary>
+  <div class="networking-collapsible-content">
+    <div id="networkingTopology" class="networking-topology" aria-live="polite"><div class="networking-loading">Loading logical topology…</div></div>
+  </div>
+</details>
+
+<details class="card networking-collapsible">
+  <summary class="networking-collapsible-summary">
+    <span><strong>Infrastructure</strong><small>Core network, automation, and cabinet services</small></span>
+    <span class="networking-chevron" aria-hidden="true"></span>
+  </summary>
+  <div class="networking-collapsible-content">
+    <div id="networkingInfrastructureGrid" class="networking-device-grid"></div>
+    <div id="networkingInfrastructureEmpty" class="empty-state is-hidden">Infrastructure telemetry is unavailable.</div>
+  </div>
+</details>
+
+<details class="card networking-collapsible">
+  <summary class="networking-collapsible-summary">
+    <span><strong>Security Devices</strong><small>Ring camera status reused from the existing Security subsystem</small></span>
+    <span class="networking-chevron" aria-hidden="true"></span>
+  </summary>
+  <div class="networking-collapsible-content">
+    <div id="networkingSecurityGrid" class="networking-device-grid"></div>
+    <div id="networkingSecurityEmpty" class="empty-state is-hidden">Security device telemetry is unavailable.</div>
+  </div>
+</details>
+
+<details class="card networking-collapsible">
+  <summary class="networking-collapsible-summary">
+    <span><strong>Client Devices</strong><small>Live Peplink clients grouped by automatic or registry classification</small></span>
+    <span class="networking-chevron" aria-hidden="true"></span>
+  </summary>
+  <div class="networking-collapsible-content">
+    <div id="networkingCategorySummary" class="networking-category-summary"></div>
+    <div id="networkingClientGrid" class="networking-device-grid"></div>
+    <div id="networkingClientEmpty" class="empty-state is-hidden">No client devices were returned by the Peplink API.</div>
+  </div>
+</details>
+
+<details class="card networking-collapsible networking-inventory-section">
+  <summary class="networking-collapsible-summary">
+    <span><strong>Device Inventory</strong><small>Search, sort, filter, and maintain RC-001 friendly names</small></span>
+    <span class="networking-summary-actions"><span id="networkingInventoryCount" class="networking-readonly-badge">0 devices</span><span class="networking-chevron" aria-hidden="true"></span></span>
+  </summary>
+  <div class="networking-collapsible-content">
+  <div class="networking-inventory-controls">
+    <label class="networking-control-group">Search<input id="networkingSearch" type="search" placeholder="Name, IP, MAC, vendor…" autocomplete="off"></label>
+    <label class="networking-control-group">Category<select id="networkingCategoryFilter"><option value="all">All categories</option></select></label>
+    <label class="networking-control-group">Status<select id="networkingStatusFilter"><option value="all">All statuses</option><option value="online">Online</option><option value="offline">Offline</option></select></label>
+    <label class="networking-control-group">Connection<select id="networkingConnectionFilter"><option value="all">All connections</option></select></label>
+    <button id="networkingClearFilters" type="button" class="networking-clear-button">Clear</button>
+  </div>
+
+  <div class="networking-table-wrap">
+    <table class="networking-inventory-table">
+      <thead><tr>
+        <th><button type="button" class="networking-sort-button" data-networking-sort="name">Device ↕</button></th>
+        <th><button type="button" class="networking-sort-button" data-networking-sort="ip">Address ↕</button></th>
+        <th>MAC</th>
+        <th><button type="button" class="networking-sort-button" data-networking-sort="category">Category ↕</button></th>
+        <th><button type="button" class="networking-sort-button" data-networking-sort="connection">Connection ↕</button></th>
+        <th><button type="button" class="networking-sort-button" data-networking-sort="status">Status ↕</button></th>
+        <th>Registry</th>
+      </tr></thead>
+      <tbody id="networkingInventoryBody"></tbody>
+    </table>
+  </div>
+  <div id="networkingInventoryEmpty" class="empty-state is-hidden">No devices match the current filters.</div>
+  </div>
+</details>
+
+<aside id="networkingDeviceDrawer" class="networking-device-drawer" aria-hidden="true" aria-labelledby="networkingDrawerTitle">
+  <button id="networkingDrawerBackdrop" class="networking-drawer-backdrop" type="button" aria-label="Close device details"></button>
+  <section class="networking-drawer-panel" role="dialog" aria-modal="true">
+    <header class="networking-drawer-header">
+      <div><span class="page-eyebrow">Device Details</span><h3 id="networkingDrawerTitle">Selected device</h3><p id="networkingDrawerSubtitle">Live RC-001 network telemetry</p></div>
+      <button id="networkingDrawerClose" class="networking-drawer-close" type="button" aria-label="Close device details">×</button>
+    </header>
+    <div id="networkingDrawerStatus" class="networking-drawer-status"><span class="networking-live-orb"></span><strong>Unknown</strong><small>Awaiting telemetry</small></div>
+    <div id="networkingDrawerFacts" class="networking-drawer-facts"></div>
+    <div id="networkingDrawerMetrics" class="networking-drawer-metrics"></div>
+    <p id="networkingDrawerNotes" class="networking-drawer-notes"></p>
+    <div class="networking-drawer-actions"><button id="networkingDrawerRegistry" type="button" class="button-secondary" hidden>Edit registry</button></div>
+  </section>
+</aside>
+
+<dialog id="networkingRegistryDialog" class="networking-registry-dialog">
+  <div class="networking-registry-dialog-inner">
+    <div class="networking-registry-dialog-header"><div><h3>Device Registry</h3><p id="networkingRegistryDeviceContext">Selected device</p></div></div>
+    <input id="networkingRegistryMac" type="hidden">
+    <div class="networking-registry-fields">
+      <label class="networking-control-group">Friendly name<input id="networkingRegistryName" type="text" maxlength="80"></label>
+      <label class="networking-control-group">Category<select id="networkingRegistryCategory">
+        <option value="infrastructure">Infrastructure</option><option value="security">Security</option><option value="iot">IoT</option><option value="computers">Computers</option><option value="entertainment">Entertainment</option><option value="mobile">Mobile</option><option value="unknown">Unknown</option>
+      </select></label>
+      <label class="networking-control-group">Notes<textarea id="networkingRegistryNotes" maxlength="240"></textarea></label>
+    </div>
+    <div class="networking-registry-actions">
+      <button id="networkingRegistryDelete" type="button" class="networking-registry-delete" hidden>Remove override</button>
+      <div><button id="networkingRegistryCancel" type="button">Cancel</button><button id="networkingRegistrySave" type="button" class="button-secondary">Save</button></div>
+    </div>
+    <div id="networkingRegistryFeedback" class="networking-registry-feedback" aria-live="polite"></div>
+  </div>
+</dialog>
+{% endblock %}

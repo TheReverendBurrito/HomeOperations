@@ -1,0 +1,294 @@
+{% extends "base.html" %}
+
+{% block title %}Home Operations Center · Home{% endblock %}
+
+{% block content %}
+<section class="card performance-card home-performance-card">
+    <div class="section-header">
+        <div>
+            <div class="section-title">Network Performance</div>
+            <div class="section-subtitle">
+                Latest Ookla network-quality test
+            </div>
+        </div>
+        <a
+            id="speedtestResultLink"
+            class="result-link is-hidden"
+            href="#"
+            target="_blank"
+            rel="noopener noreferrer"
+        >
+            View Result ↗
+        </a>
+    </div>
+
+    <div class="performance-grid home-performance-grid">
+        <article class="performance-item">
+            <div class="performance-label performance-label-with-icon">
+                <svg class="icon" aria-hidden="true">
+                    <use href="{{ url_for('static', filename='icons.svg') }}#arrow-down"></use>
+                </svg>
+                <span>Download</span>
+            </div>
+            <div id="speedDownload" class="performance-value">--</div>
+            <div class="performance-detail">Measured throughput</div>
+        </article>
+
+        <article class="performance-item">
+            <div class="performance-label performance-label-with-icon">
+                <svg class="icon" aria-hidden="true">
+                    <use href="{{ url_for('static', filename='icons.svg') }}#arrow-up"></use>
+                </svg>
+                <span>Upload</span>
+            </div>
+            <div id="speedUpload" class="performance-value">--</div>
+            <div class="performance-detail">Measured throughput</div>
+        </article>
+
+        <article class="performance-item">
+            <div class="performance-label performance-label-with-icon">
+                <svg class="icon" aria-hidden="true">
+                    <use href="{{ url_for('static', filename='icons.svg') }}#speedometer"></use>
+                </svg>
+                <span>Latency</span>
+            </div>
+            <div id="speedPing" class="performance-value">--</div>
+            <div id="internetQuality" class="quality-label quality-unknown">
+                Waiting
+            </div>
+        </article>
+
+        <article class="performance-item">
+            <div class="performance-label performance-label-with-icon">
+                <svg class="icon" aria-hidden="true">
+                    <use href="{{ url_for('static', filename='icons.svg') }}#activity"></use>
+                </svg>
+                <span>Jitter</span>
+            </div>
+            <div id="speedJitter" class="performance-value">--</div>
+            <div id="jitterQuality" class="quality-label quality-unknown">
+                Waiting
+            </div>
+        </article>
+
+        <article class="performance-item home-performance-secondary">
+            <div class="performance-label performance-label-with-icon">
+                <svg class="icon" aria-hidden="true">
+                    <use href="{{ url_for('static', filename='icons.svg') }}#server"></use>
+                </svg>
+                <span>Test Server</span>
+            </div>
+            <div
+                id="speedServer"
+                class="performance-value performance-value-text"
+            >
+                Waiting
+            </div>
+            <div id="speedServerLocation" class="performance-detail">--</div>
+        </article>
+
+        <article class="performance-item home-performance-secondary">
+            <div class="performance-label performance-label-with-icon">
+                <svg class="icon" aria-hidden="true">
+                    <use href="{{ url_for('static', filename='icons.svg') }}#clock"></use>
+                </svg>
+                <span>Last Test</span>
+            </div>
+            <div
+                id="speedAge"
+                class="performance-value performance-value-text"
+            >
+                Waiting
+            </div>
+            <div id="speedTestTime" class="performance-detail">--</div>
+        </article>
+    </div>
+</section>
+
+<section class="card home-network-card">
+    <div class="section-header compact-section-header">
+        <div>
+            <div class="section-title">Network Operations</div>
+            <div class="section-subtitle">
+                Live per-WAN status and Peplink SNMP traffic
+            </div>
+        </div>
+        <div
+            id="snmpTelemetryStatus"
+            class="telemetry-badge telemetry-waiting"
+        >
+            Telemetry starting
+        </div>
+    </div>
+    <div id="internetRows"></div>
+</section>
+
+<section class="operations-launch-section executive-domain-section"
+         aria-labelledby="operationsLaunchTitle">
+    <div class="section-header compact-section-header">
+        <div>
+            <div id="operationsLaunchTitle" class="section-title">
+                Operational Domains
+            </div>
+            <div class="section-subtitle">
+                Live summaries with focused drill-down pages
+            </div>
+        </div>
+    </div>
+
+    <div class="executive-domain-grid">
+        <a
+            class="executive-domain-card executive-domain-environment"
+            href="{{ url_for('environment_page') }}"
+        >
+            <div class="executive-domain-card-header">
+                <div class="executive-domain-title-wrap">
+                    <span class="executive-domain-icon">
+                        <svg class="icon icon-lg" aria-hidden="true">
+                            <use href="{{ url_for('static', filename='icons.svg') }}#thermometer"></use>
+                        </svg>
+                    </span>
+                    <div>
+                        <strong>Environmental Operations</strong>
+                        <small>Indoor and outdoor conditions</small>
+                    </div>
+                </div>
+                <span class="executive-domain-arrow" aria-hidden="true">›</span>
+            </div>
+
+            <div class="executive-domain-status">
+                <span id="homeEnvironmentStateDot" class="executive-domain-status-dot"></span>
+                <span id="homeEnvironmentState">Loading</span>
+            </div>
+
+            <div class="executive-domain-metrics executive-domain-metrics-three">
+                <div class="executive-domain-metric">
+                    <span class="executive-domain-metric-label">AQI</span>
+                    <strong id="homeAqiValue">--</strong>
+                    <small id="homeAqiCategory">Outdoor air</small>
+                </div>
+                <div class="executive-domain-metric">
+                    <span class="executive-domain-metric-label">Outside</span>
+                    <strong id="homeOutdoorTemperature">--°F</strong>
+                    <small>Current temperature</small>
+                </div>
+                <div class="executive-domain-metric">
+                    <span class="executive-domain-metric-label">Cabinet</span>
+                    <strong id="homeCabinetTemperature">--°F</strong>
+                    <small>Internal temperature</small>
+                </div>
+            </div>
+        </a>
+
+        <a
+            class="executive-domain-card executive-domain-security"
+            href="{{ url_for('security_page') }}"
+        >
+            <div class="executive-domain-card-header">
+                <div class="executive-domain-title-wrap">
+                    <span class="executive-domain-icon">◆</span>
+                    <div>
+                        <strong>Security Operations</strong>
+                        <small>High-level awareness without duplicating Ring</small>
+                    </div>
+                </div>
+                <span class="executive-domain-arrow" aria-hidden="true">›</span>
+            </div>
+
+            <div class="executive-domain-status">
+                <span class="executive-domain-status-dot executive-domain-status-ready"></span>
+                <span>Integration Ready</span>
+            </div>
+
+            <div class="executive-domain-metrics">
+                <div class="executive-domain-metric">
+                    <span class="executive-domain-metric-label">Platform</span>
+                    <strong>Ready</strong>
+                    <small>Home Assistant / Ring path</small>
+                </div>
+                <div class="executive-domain-metric">
+                    <span class="executive-domain-metric-label">Coverage</span>
+                    <strong id="homeSecurityCameraCount">{{ configured_camera_count }} {{ "Camera" if configured_camera_count == 1 else "Cameras" }}</strong>
+                    <small>Perimeter and entry monitoring</small>
+                </div>
+            </div>
+        </a>
+
+        <a
+            class="executive-domain-card executive-domain-lighting"
+            href="{{ url_for('lighting_page') }}"
+        >
+            <div class="executive-domain-card-header">
+                <div class="executive-domain-title-wrap">
+                    <span class="executive-domain-icon">
+                        <svg class="icon icon-lg" aria-hidden="true">
+                            <use href="{{ url_for('static', filename='icons.svg') }}#lightbulb"></use>
+                        </svg>
+                    </span>
+                    <div>
+                        <strong>Lighting Operations</strong>
+                        <small>Cabinet automation and manual control</small>
+                    </div>
+                </div>
+                <span class="executive-domain-arrow" aria-hidden="true">›</span>
+            </div>
+
+            <div class="executive-domain-status">
+                <span class="executive-domain-status-dot executive-domain-status-good"></span>
+                <span id="homeLightingMode">Loading</span>
+            </div>
+
+            <div class="executive-domain-metrics">
+                <div class="executive-domain-metric">
+                    <span class="executive-domain-metric-label">Controller</span>
+                    <strong id="homeLightingControl">Automatic</strong>
+                    <small>Current control state</small>
+                </div>
+                <div class="executive-domain-metric">
+                    <span class="executive-domain-metric-label">Override</span>
+                    <strong id="homeLightingOverride">Off</strong>
+                    <small>Manual override</small>
+                </div>
+            </div>
+        </a>
+
+        <a
+            class="executive-domain-card executive-domain-operations"
+            href="{{ url_for('operations_page') }}"
+        >
+            <div class="executive-domain-card-header">
+                <div class="executive-domain-title-wrap">
+                    <span class="executive-domain-icon">
+                        <svg class="icon icon-lg" aria-hidden="true">
+                            <use href="{{ url_for('static', filename='icons.svg') }}#activity"></use>
+                        </svg>
+                    </span>
+                    <div>
+                        <strong>Operations Center</strong>
+                        <small>Events and infrastructure health</small>
+                    </div>
+                </div>
+                <span class="executive-domain-arrow" aria-hidden="true">›</span>
+            </div>
+
+            <div class="executive-domain-status">
+                <span class="executive-domain-status-dot executive-domain-status-good"></span>
+                <span>Healthy</span>
+            </div>
+
+            <div class="executive-domain-metrics">
+                <div class="executive-domain-metric">
+                    <span class="executive-domain-metric-label">Recent Event</span>
+                    <strong id="homeRecentEvent">Loading</strong>
+                    <small>Most recent activity</small>
+                </div>
+                <div class="executive-domain-metric">
+                    <span class="executive-domain-metric-label">Version</span>
+                    <strong>v{{ release_info.version }}</strong>
+                    <small>Build {{ release_info.build }}</small>
+                </div>
+            </div>
+        </a>
+    </div>
+</section>
+{% endblock %}

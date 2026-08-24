@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %}Home Operations Center · {{ page_title }}{% endblock %}
+
+{% block content %}
+<section class="page-heading">
+    <div>
+        <div class="page-eyebrow">RC-001 v2.0 Roadmap</div>
+        <h2>{{ page_title }}</h2>
+        <p>{{ page_description }}</p>
+    </div>
+    <a class="page-back-link" href="{{ url_for('home') }}">← Home overview</a>
+</section>
+
+<section class="card phase-placeholder-card">
+    <div class="phase-placeholder-icon" aria-hidden="true">{{ page_icon }}</div>
+    <div>
+        <div class="section-title">{{ page_title }}</div>
+        <p>{{ phase_message }}</p>
+        <span class="phase-badge">{{ phase_label }}</span>
+    </div>
+</section>
+{% endblock %}

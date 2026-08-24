@@ -1,0 +1,25 @@
+{
+  "product": "RC-001",
+  "version": "3.0.0",
+  "status": "production_frozen",
+  "frozen_at": "2026-07-16T19:20:00-04:00",
+  "pages": [
+    "home",
+    "environment",
+    "security",
+    "lighting",
+    "networking",
+    "operations"
+  ],
+  "networking_scope": [
+    "network health summary",
+    "logical topology",
+    "infrastructure devices",
+    "security devices",
+    "client devices",
+    "device inventory",
+    "device details drawer",
+    "live status animations"
+  ],
+  "change_policy": "Future changes require a new semantic versioned release."
+}

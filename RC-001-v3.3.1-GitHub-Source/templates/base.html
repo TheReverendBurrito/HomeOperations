@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}Home Operations Center{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='rc001.css', v=release_info.build) }}">
+</head>
+
+<body
+    data-poll-seconds="{{ poll_seconds|int }}"
+    data-active-page="{{ active_page }}"
+>
+<div class="container">
+
+    <header id="systemHeader" class="header">
+        <div class="header-kicker">RC-001</div>
+        <h1>Home Operations Center</h1>
+        <div class="header-subtitle">Infrastructure · Environment · Security</div>
+        <div class="header-build">{{ release_info.release_type_label }} • v{{ release_info.version }}</div>
+        <div id="systemStatus" class="status">
+            <span
+                id="statusIndicator"
+                class="status-indicator status-indicator-unknown"
+            ></span>
+            <span id="statusText">Loading operational status...</span>
+        </div>
+    </header>
+
+    <section class="health-strip" aria-label="Operations health summary">
+        <div class="health-item">
+            <span
+                id="healthInternetDot"
+                class="health-dot health-neutral"
+            ></span>
+            <span class="health-name health-name-with-icon">
+                <svg class="icon icon-sm" aria-hidden="true">
+                    <use href="{{ url_for('static', filename='icons.svg') }}#globe"></use>
+                </svg>
+                Internet
+            </span>
+            <span id="healthInternetValue" class="health-value">Loading</span>
+        </div>
+
+        <div class="health-item">
+            <span
+                id="healthEnvironmentDot"
+                class="health-dot health-neutral"
+            ></span>
+            <span class="health-name health-name-with-icon">
+                <svg class="icon icon-sm" aria-hidden="true">
+                    <use href="{{ url_for('static', filename='icons.svg') }}#thermometer"></use>
+                </svg>
+                Environment
+            </span>
+            <span id="healthEnvironmentValue" class="health-value">Loading</span>
+        </div>
+
+        <div class="health-item">
+            <span
+                id="healthLightingDot"
+                class="health-dot health-neutral"
+            ></span>
+            <span class="health-name health-name-with-icon">
+                <svg class="icon icon-sm" aria-hidden="true">
+                    <use href="{{ url_for('static', filename='icons.svg') }}#lightbulb"></use>
+                </svg>
+                Lighting
+            </span>
+            <span id="healthLightingValue" class="health-value">Loading</span>
+        </div>
+
+        <div class="health-item">
+            <span
+                id="healthAutomationDot"
+                class="health-dot health-neutral"
+            ></span>
+            <span class="health-name health-name-with-icon">
+                <svg class="icon icon-sm" aria-hidden="true">
+                    <use href="{{ url_for('static', filename='icons.svg') }}#automation"></use>
+                </svg>
+                Automation
+            </span>
+            <span id="healthAutomationValue" class="health-value">Loading</span>
+        </div>
+
+        <div class="health-item">
+            <span
+                id="healthSecurityDot"
+                class="health-dot health-good"
+            ></span>
+            <span class="health-name health-name-with-icon">
+                <span class="security-shield" aria-hidden="true">◆</span>
+                Security
+            </span>
+            <span id="healthSecurityValue" class="health-value">Ready</span>
+        </div>
+    </section>
+
+    <nav class="operations-nav operations-nav-minimal" aria-label="RC-001 primary navigation">
+        <a
+            class="operations-nav-link{% if active_page == 'home' %} is-active{% endif %}"
+            href="{{ url_for('home') }}"
+            {% if active_page == 'home' %}aria-current="page"{% endif %}
+        >
+            <svg class="icon icon-sm" aria-hidden="true">
+                <use href="{{ url_for('static', filename='icons.svg') }}#home"></use>
+            </svg>
+            Home
+        </a>
+
+        <a
+            class="operations-nav-link{% if active_page == 'environment' %} is-active{% endif %}"
+            href="{{ url_for('environment_page') }}"
+            {% if active_page == 'environment' %}aria-current="page"{% endif %}
+        >
+            <svg class="icon icon-sm" aria-hidden="true">
+                <use href="{{ url_for('static', filename='icons.svg') }}#thermometer"></use>
+            </svg>
+            Environment
+        </a>
+
+        <a
+            class="operations-nav-link{% if active_page == 'security' %} is-active{% endif %}"
+            href="{{ url_for('security_page') }}"
+            {% if active_page == 'security' %}aria-current="page"{% endif %}
+        >
+            <span aria-hidden="true">◆</span>
+            Security
+        </a>
+
+        <a
+            class="operations-nav-link{% if active_page == 'lighting' %} is-active{% endif %}"
+            href="{{ url_for('lighting_page') }}"
+            {% if active_page == 'lighting' %}aria-current="page"{% endif %}
+        >
+            <svg class="icon icon-sm" aria-hidden="true">
+                <use href="{{ url_for('static', filename='icons.svg') }}#lightbulb"></use>
+            </svg>
+            Lighting
+        </a>
+
+        <a
+            class="operations-nav-link{% if active_page == 'networking' %} is-active{% endif %}"
+            href="{{ url_for('networking_page') }}"
+            {% if active_page == 'networking' %}aria-current="page"{% endif %}
+        >
+            <svg class="icon icon-sm" aria-hidden="true">
+                <use href="{{ url_for('static', filename='icons.svg') }}#router"></use>
+            </svg>
+            Networking
+        </a>
+
+        <a
+            class="operations-nav-link{% if active_page == 'operations' %} is-active{% endif %}"
+            href="{{ url_for('operations_page') }}"
+            {% if active_page == 'operations' %}aria-current="page"{% endif %}
+        >
+            <svg class="icon icon-sm" aria-hidden="true">
+                <use href="{{ url_for('static', filename='icons.svg') }}#activity"></use>
+            </svg>
+            Operations
+        </a>
+    </nav>
+
+    <main class="page-main page-main-{{ active_page }}">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="footer">
+        <div class="footer-left">
+            <strong>RC-001 · Home Operations Center</strong>
+            <span>Version {{ release_info.version }} · Build {{ release_info.build }}</span>
+        </div>
+        <div class="footer-center">
+            <span id="peplinkStatus" class="footer-service"></span>
+            <span class="separator">•</span>
+            <span id="wledStatus" class="footer-service"></span>
+            <span class="separator">•</span>
+            <span id="controllerStatus" class="footer-service"></span>
+        </div>
+    </footer>
+
+</div>
+<script src="{{ url_for('static', filename='rc001.js', v=release_info.build) }}" defer></script>
+</body>
+</html>

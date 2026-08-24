@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+{% block title %}Home Operations Center · Operations{% endblock %}
+{% block content %}
+<section class="page-heading">
+    <div>
+        <div class="page-eyebrow operations-page-eyebrow">Operational Domain</div>
+        <h2>Operations Center</h2>
+        <p>Event history, infrastructure health, application services, and current production build.</p>
+    </div>
+    <div class="operations-page-actions">
+        <button type="button" id="operationsRefreshButton" class="operations-refresh-button">
+            <svg class="icon icon-sm" aria-hidden="true">
+                <use href="{{ url_for('static', filename='icons.svg') }}#refresh"></use>
+            </svg>
+            Refresh Now
+        </button>
+        <a class="page-back-link" href="{{ url_for('home') }}">← Home overview</a>
+    </div>
+</section>
+
+<section class="operations-overview-grid">
+    <article class="card operations-summary-card">
+        <div class="section-header compact-section-header">
+            <div>
+                <div class="section-title">Executive Operations Status</div>
+                <div class="section-subtitle">Current RC-001 application and service posture</div>
+            </div>
+            <div id="operationsOverallBadge" class="operations-domain-badge operations-domain-good">Loading</div>
+        </div>
+        <div class="operations-summary-grid">
+            <div class="operations-summary-metric">
+                <span class="operations-summary-icon"><svg class="icon icon-lg" aria-hidden="true"><use href="{{ url_for('static', filename='icons.svg') }}#activity"></use></svg></span>
+                <div><span class="operations-summary-label">Application</span><strong id="operationsApplicationState">--</strong><small>RC-001 service state</small></div>
+            </div>
+            <div class="operations-summary-metric">
+                <span class="operations-summary-icon"><svg class="icon icon-lg" aria-hidden="true"><use href="{{ url_for('static', filename='icons.svg') }}#clock"></use></svg></span>
+                <div><span class="operations-summary-label">Runtime</span><strong id="operationsRuntime">--</strong><small>Since application startup</small></div>
+            </div>
+            <div class="operations-summary-metric">
+                <span class="operations-summary-icon"><svg class="icon icon-lg" aria-hidden="true"><use href="{{ url_for('static', filename='icons.svg') }}#database"></use></svg></span>
+                <div><span class="operations-summary-label">Database</span><strong id="operationsDatabaseState">--</strong><small>Local event store</small></div>
+            </div>
+            <div class="operations-summary-metric">
+                <span class="operations-summary-icon"><svg class="icon icon-lg" aria-hidden="true"><use href="{{ url_for('static', filename='icons.svg') }}#info"></use></svg></span>
+                <div><span class="operations-summary-label">Production Build</span><strong id="operationsVersion">--</strong><small>Installed RC-001 release</small></div>
+            </div>
+        </div>
+    </article>
+
+    <article class="card operations-activity-card">
+        <div class="section-header compact-section-header">
+            <div>
+                <div class="section-title">Recent Activity Summary</div>
+                <div class="section-subtitle">Events returned by the current operations window</div>
+            </div>
+        </div>
+        <div class="operations-activity-grid">
+            <div class="operations-activity-metric"><span class="operations-activity-label">Events Loaded</span><strong id="operationsEventCount">--</strong></div>
+            <div class="operations-activity-metric"><span class="operations-activity-label">Critical</span><strong id="operationsCriticalCount" class="operations-count-critical">--</strong></div>
+            <div class="operations-activity-metric"><span class="operations-activity-label">Warnings</span><strong id="operationsWarningCount" class="operations-count-warning">--</strong></div>
+            <div class="operations-activity-metric"><span class="operations-activity-label">Last Event</span><strong id="operationsLastEventAge">--</strong></div>
+        </div>
+        <div class="operations-last-event">
+            <span class="operations-last-event-label">Most Recent</span>
+            <strong id="operationsLastEventMessage">Loading events…</strong>
+        </div>
+    </article>
+</section>
+
+<section>
+    <article id="operationsAlertHealthCard" class="card operations-alert-health-card">
+        <div class="section-header compact-section-header">
+            <div>
+                <div class="section-title">Alerting &amp; Notification Health</div>
+                <div class="section-subtitle">Pushover delivery, background monitoring, watchdog, and active conditions</div>
+            </div>
+            <div id="operationsAlertBadge" class="operations-domain-badge operations-domain-good">Loading</div>
+        </div>
+        <div class="operations-alert-health-grid">
+            <div class="operations-alert-health-item">
+                <span>Pushover Delivery</span>
+                <strong id="operationsAlertDelivery">--</strong>
+                <small id="operationsAlertLastDelivery">Waiting for status</small>
+            </div>
+            <div class="operations-alert-health-item">
+                <span>Alert Worker</span>
+                <strong id="operationsAlertWorker">--</strong>
+                <small>Background condition evaluation</small>
+            </div>
+            <div class="operations-alert-health-item">
+                <span>Independent Watchdog</span>
+                <strong id="operationsAlertWatchdog">--</strong>
+                <small id="operationsAlertWatchdogAge">Separate service heartbeat</small>
+            </div>
+            <div class="operations-alert-health-item">
+                <span>Alert State</span>
+                <strong id="operationsAlertCounts">--</strong>
+                <small id="operationsAlertPending">Active and pending conditions</small>
+            </div>
+        </div>
+        <div id="operationsActiveAlerts" class="operations-active-alerts">
+            <span class="operations-active-alerts-empty">No active alert conditions</span>
+        </div>
+    </article>
+</section>
+
+<section class="operations-detail-grid">
+    <article class="card operations-log-card">
+        <div class="section-header compact-section-header">
+            <div>
+                <div class="section-title">Operations Log</div>
+                <div class="section-subtitle">Latest network, environment, automation, and system events</div>
+            </div>
+        </div>
+        <div class="operations-filter-bar" role="group" aria-label="Operations log filters">
+            <button type="button" class="operations-filter-button is-active" data-event-filter="all">All</button>
+            <button type="button" class="operations-filter-button" data-event-filter="wan">Network</button>
+            <button type="button" class="operations-filter-button" data-event-filter="environment">Environment</button>
+            <button type="button" class="operations-filter-button" data-event-filter="lighting">Lighting</button>
+            <button type="button" class="operations-filter-button" data-event-filter="automation">Automation</button>
+            <button type="button" class="operations-filter-button" data-event-filter="speedtest">Performance</button>
+            <button type="button" class="operations-filter-button" data-event-filter="alert">Alerts</button>
+        </div>
+        <div id="events" class="events operations-events"></div>
+        <div id="operationsLogEmpty" class="operations-log-empty is-hidden">No events match the selected category.</div>
+    </article>
+
+    <article class="card infrastructure-health-card">
+        <div class="section-header compact-section-header">
+            <div>
+                <div class="section-title">Infrastructure Health</div>
+                <div class="section-subtitle">Live service connectivity and application components</div>
+            </div>
+        </div>
+        <div id="systemInformation" class="system-information"></div>
+    </article>
+</section>
+{% endblock %}

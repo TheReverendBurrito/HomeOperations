@@ -1,0 +1,215 @@
+{% extends "base.html" %}
+
+{% block title %}Home Operations Center · Lighting{% endblock %}
+
+{% block content %}
+<section class="page-heading">
+    <div>
+        <div class="page-eyebrow">Operational Domain</div>
+        <h2>Lighting Operations</h2>
+        <p>
+            Cabinet lighting automation, current operating mode, presets,
+            and temporary manual control.
+        </p>
+    </div>
+    <a class="page-back-link" href="{{ url_for('home') }}">← Home overview</a>
+</section>
+
+<section class="lighting-domain-grid">
+    <article class="card lighting-summary-card">
+        <div class="section-header compact-section-header">
+            <div>
+                <div class="section-title">Current Lighting State</div>
+                <div class="section-subtitle">
+                    Live WLED and RC-001 automation status
+                </div>
+            </div>
+            <div id="automaticStateBadge" class="lighting-state-badge">
+                Loading
+            </div>
+        </div>
+
+        <div class="lighting-summary-grid">
+            <div
+                id="lightingModeMetric"
+                class="lighting-summary-metric lighting-summary-metric-good"
+            >
+                <span class="lighting-summary-icon" aria-hidden="true">
+                    <svg class="icon icon-lg">
+                        <use href="{{ url_for('static', filename='icons.svg') }}#lightbulb"></use>
+                    </svg>
+                </span>
+                <div class="lighting-summary-copy">
+                    <span class="lighting-summary-label">Cabinet Mode</span>
+                    <strong id="lightingPageMode">--</strong>
+                    <small>Active RC-001 lighting state</small>
+                </div>
+            </div>
+
+            <div
+                id="lightingControlMetric"
+                class="lighting-summary-metric lighting-summary-metric-good"
+            >
+                <span class="lighting-summary-icon" aria-hidden="true">
+                    <svg class="icon icon-lg">
+                        <use href="{{ url_for('static', filename='icons.svg') }}#automation"></use>
+                    </svg>
+                </span>
+                <div class="lighting-summary-copy">
+                    <span class="lighting-summary-label">Control</span>
+                    <strong id="lightingPageControl">--</strong>
+                    <small>Automatic or manual override</small>
+                </div>
+            </div>
+
+            <div
+                id="lightingWledMetric"
+                class="lighting-summary-metric lighting-summary-metric-info"
+            >
+                <span class="lighting-summary-icon" aria-hidden="true">
+                    <svg class="icon icon-lg">
+                        <use href="{{ url_for('static', filename='icons.svg') }}#wifi"></use>
+                    </svg>
+                </span>
+                <div class="lighting-summary-copy">
+                    <span class="lighting-summary-label">WLED</span>
+                    <strong id="lightingPageWled">--</strong>
+                    <small>Controller connectivity</small>
+                </div>
+            </div>
+
+            <div
+                id="lightingOverrideMetric"
+                class="lighting-summary-metric lighting-summary-metric-warning"
+            >
+                <span class="lighting-summary-icon lighting-summary-icon-symbol"
+                      aria-hidden="true">✋</span>
+                <div class="lighting-summary-copy">
+                    <span class="lighting-summary-label">Override</span>
+                    <strong id="lightingPageOverride">--</strong>
+                    <small>Temporary manual state</small>
+                </div>
+            </div>
+        </div>
+    </article>
+
+    <article class="card lighting-control-card">
+        <div class="section-header compact-section-header">
+            <div>
+                <div class="section-title">Manual Lighting Control</div>
+                <div class="section-subtitle">
+                    Temporary overrides return to automatic control
+                </div>
+            </div>
+        </div>
+
+        <div id="lightingControlStatus" class="control-status">
+            <span class="control-status-dot"></span>
+            <span id="lightingControlStatusText">Loading</span>
+        </div>
+
+        <div class="lighting-controls-grid">
+            <button
+                type="button"
+                class="lighting-control-button"
+                data-light-status="normal"
+            >
+                <span class="lighting-control-icon">●</span>
+                <span>
+                    <strong>Normal</strong>
+                    <small>Standard operating state</small>
+                </span>
+            </button>
+
+            <button
+                type="button"
+                class="lighting-control-button"
+                data-light-status="maintenance"
+            >
+                <span class="lighting-control-icon">◆</span>
+                <span>
+                    <strong>Maintenance</strong>
+                    <small>Cabinet service mode</small>
+                </span>
+            </button>
+
+            <button
+                type="button"
+                class="lighting-control-button"
+                data-light-status="network"
+            >
+                <span class="lighting-control-icon">⌁</span>
+                <span>
+                    <strong>Network</strong>
+                    <small>Network activity preset</small>
+                </span>
+            </button>
+
+            <button
+                type="button"
+                class="lighting-control-button"
+                data-light-status="failover"
+            >
+                <span class="lighting-control-icon">↔</span>
+                <span>
+                    <strong>Failover</strong>
+                    <small>Reduced redundancy state</small>
+                </span>
+            </button>
+
+            <button
+                type="button"
+                class="lighting-control-button"
+                data-light-status="tmobile"
+            >
+                <span class="lighting-control-icon">▲</span>
+                <span>
+                    <strong>T-Mobile</strong>
+                    <small>Cellular failover active</small>
+                </span>
+            </button>
+
+            <button
+                type="button"
+                class="lighting-control-button"
+                data-light-status="firmware"
+            >
+                <span class="lighting-control-icon">⬆</span>
+                <span>
+                    <strong>Firmware</strong>
+                    <small>Update or maintenance activity</small>
+                </span>
+            </button>
+
+            <button
+                type="button"
+                class="lighting-control-button"
+                data-light-status="offline"
+            >
+                <span class="lighting-control-icon">!</span>
+                <span>
+                    <strong>Critical</strong>
+                    <small>Internet or infrastructure outage</small>
+                </span>
+            </button>
+
+            <button
+                type="button"
+                id="returnToAutoButton"
+                class="lighting-control-button lighting-control-return"
+            >
+                <span class="lighting-control-icon">✓</span>
+                <span>
+                    <strong>Return to Automatic</strong>
+                    <small>Resume RC-001 status control</small>
+                </span>
+            </button>
+        </div>
+
+        <div class="lighting-control-note">
+            Manual selections are temporary and do not change the
+            underlying network-health decision logic.
+        </div>
+    </article>
+</section>
+{% endblock %}
